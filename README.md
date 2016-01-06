@@ -11,11 +11,12 @@ set firewall family ethernet-switching filter allow-specific-subnets-only term a
 set firewall family ethernet-switching filter allow-specific-subnets-only term alert then discard
 set firewall family ethernet-switching filter allow-specific-subnets-only term alert then syslog
 ```
-Any traffic that matches the denied entry of the firewall filter will generate a SYSLOG message that looks like this, notice that there is “PFE-FW-SYSLOG-ETH:” at the start of this log line, this will be there for any event that matches this. It would also be different if it was attached to an IP interface, but for my testing it is associated with an Ethernet interface. 
+Any traffic that matches the denied entry of the firewall filter will generate a SYSLOG message that looks like this, notice that there is PFE_FW_SYSLOG_ETH: at the start of this log line, this will be there for any event that matches this. It would also be different if it was attached to an IP interface, but for my testing it is associated with an Ethernet interface. 
 ```
 Sep 28 06:29:21  EX2200-12C fpc0 PFE_FW_SYSLOG_ETH: FW: ge-0/0/5.0   D ff:ff:ff:ff:ff:ff 08:81:f4:a8:da:09 0806 (1 packets) 
 ```
 Once the firewall filter is created it needs to be assigned to one or all of the access interfaces facing the clients on the network. This is configured as follows; 
+
 With this applied your ethernet interface is going to monitor every source IP address and permit it if it matches the source-address entries. If it does not match then it will generate a SYSLOG message (as above) and discard the packet. 
 
 ```
