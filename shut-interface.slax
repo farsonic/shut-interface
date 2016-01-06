@@ -1,0 +1,37 @@
+version 1.0; 
+
+ns junos = "http://xml.juniper.net/junos/*/junos"; 
+ns xnm = "http://xml.juniper.net/xnm/1.1/xnm"; 
+ns jcs = "http://xml.juniper.net/junos/commit-scripts/1.0"; 
+import "../import/junos.xsl";
+
+
+var $pattern = "\\."; 
+param $interface;
+
+var $substrings = jcs:split($pattern, $interface,2); 
+
+match / { 
+
+ var $con = jcs:open();
+   
+ expr jcs:syslog("external.info", "Disabling interface = ", $substrings[1] );
+
+ var $xml = {
+	<configuration> {
+	     <interfaces> {
+		 <interface> {
+		     <name> $substrings[1];
+		     <disable>;
+		   }
+	     }
+	   }
+    }
+    
+  var $results = {
+	call jcs:load-configuration($connection = $con, $configuration = $xml );
+    }
+    
+  expr jcs:close($con);
+
+}
